@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Anki</title>
+	<script src="{{ static_url("jquery-3.2.1.min.js") }}"></script>
+	<script src="{{ static_url("tinymce/js/tinymce/tinymce.min.js") }}"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{{ static_url("css/normalize.css") }}" type="text/css">
+	<link rel="stylesheet" href="{{ static_url("css/skeleton.css") }}" type="text/css">
+	<link rel="stylesheet" href="{{ static_url("css/custom.css") }}" type="text/css">
+	{% block head %}{% end %}
+</head>
+<body class="has-docked-navbar">
+	<div class="navbar-spacer"></div>
+	<nav class="navbar">
+		<div class="container">
+			<ul class="navbar-list">
+				<div class="row navbar">
+					<li class="navbar-item"><a class="navbar-link" href="/anki/study">Study</a></list>
+				</div>
+			</ul>
+			{% block body %}{% end %}
+		</div>
+	</div>
+	{% block bottom %}{% end %}
+</body>
+</html>

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+{% block body %}
+{% if card != None %}
+{% set note = card.note() %}
+<form method="POST" id="anki-answer-form">
+	<h4>{{ note['Front'] }}</h4>
+	<div class="row"><div class="u-full-width"><label><input type="radio" name="response" id="1" value="1">Wrong</label></div></div>
+	<div class="row"><div class="u-full-width"><label><input type="radio" name="response" id="2" value="2">Right</label></div></div>
+	{% module xsrf_form_html() %}
+	<input type="submit" value="Save" class="button-primary"/>
+</form>
+<div class="row">
+	<div class="new three columns"><em>New: {{ counts[0] }}</em></div>
+	<div class="lrn three columns"><em>Learn: {{ counts[1] }}</em></div>
+	<div class="rev three columns"><em>Review: {{ counts[2] }}</em></div>
+	<div class="total three columns"><em>Total: {{ n }}</em></div>
+</div>
+{% else %}
+<div id="anki-no-card">
+	You are done for today. Click <a href="/anki/{{ deckName }}/reset">here</a> to reset.
+</div>
+{% end %}
+
+{% end %}

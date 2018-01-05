@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+{% block body %}
+<div id="anki-result" class="n-{{ n }}">
+	<h4>{{ note['Front'] }}</h4>
+	<div class="row"><div class="u-full-width"><label><input type="radio" name="response" id="1" value="1">Wrong</label></div></div>
+	<div class="row"><div class="u-full-width"><label><input type="radio" name="response" id="2" value="2">Right</label></div></div>
+	<p class="answer">
+		{{ note['Back'] }}
+	</p>
+	<a href="/anki/study" class="button">Continue</a>
+</div>
+{% end %}
