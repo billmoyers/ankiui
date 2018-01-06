@@ -11,18 +11,43 @@ def setDeck(collection, deckName):
 	d = collection.decks.byName(deckName)
 	collection.decks.select(d['id'])
 
-class StudyHandler (tornado.web.RequestHandler):
+class BaseHandler (tornado.web.RequestHandler):
 	def initialize(self, appPath, themePath, fdeck):
 		self.appPath = appPath
 		self.themePath = themePath
 		self.fdeck = fdeck
+	
+class IndexHandler (BaseHandler):
+	def get(self):
+		coll = self.fdeck()
+		try:
+			decks = []
+			for d in coll.decks.all():
+				try:
+					setDeck(coll, d['name'])
+					card = coll.sched.getCard()
+					counts = coll.sched.counts()
+					decks.append({ 
+						'name': d['name'],
+						**counts
+					})
+				except:
+					pass
+				print(tornado.escape.utf8(str(decks)))
+			self.render("%s/templates/index.html" % self.appPath,
+				themePath=self.themePath,
+				decks=decks,
+			)
+		finally:
+			coll.close()
+		
 
+class StudyHandler (BaseHandler):
 	def get(self, deckName):
 		deck = self.fdeck()
 		try:
 			setDeck(deck, deckName)
 			card = deck.sched.getCard()
-			print(tornado.escape.utf8(str(card.note().keys())))
 			self.render("%s/templates/study.html" % self.appPath, 
 				themePath=self.themePath, 
 				card=card, 
@@ -39,7 +64,7 @@ class StudyHandler (tornado.web.RequestHandler):
 			setDeck(deck, deckName)
 			card = deck.sched.getCard()
 			note = card.note()
-			n = self.get_argument('n')
+			n = int(self.get_argument('response'))
 			deck.sched.answerCard(card, n)
 			deck.save()
 			self.render("%s/templates/study.result.html" % self.appPath, 
@@ -54,9 +79,7 @@ class StudyHandler (tornado.web.RequestHandler):
 
 class ResetHandler (tornado.web.RequestHandler):
 	def initialize(self, appPath, themePath, fdeck, redirectUrl):
-		self.appPath = appPath
-		self.themePath = themePath
-		self.fdeck = fdeck
+		super.initialize(appPath, themePath, fdeck)
 		self.redirectUrl = redirectUrl
 
 	def get(self, deckName):
@@ -68,7 +91,7 @@ class ResetHandler (tornado.web.RequestHandler):
 				c = deck.getCard(cid)
 				c.due -= 1
 			deck.save()
-			self.redirect(self.redirectUrl)
+			self.redirect(self.redirectUrl % self.deckName)
 		finally:
 			deck.close()
 
@@ -76,8 +99,9 @@ def app(cwd, theme, ankiFilePath):
 	fdeck = lambda: aopen(ankiFilePath)
 	d = {'appPath': cwd, 'themePath': '%s/themes/%s/base.html' % (cwd, theme), 'fdeck': fdeck}
 	return tornado.web.Application([
-			(r'/anki/([^/]+)/study', StudyHandler, d),
-			(r'/anki/([^/]+)/reset', ResetHandler, {**d, **{'redirectUrl': '/anki/study'}})
+			(r'/anki/decks/*/', IndexHandler, d),
+			(r'/anki/decks/([^/]+)/study', StudyHandler, d),
+			(r'/anki/decks/([^/]+)/reset', ResetHandler, {**d, **{'redirectUrl': '/anki/decks/%s/study'}})
 		], 
 		debug = True,
 		template_path = '%s/themes/%s/' % (cwd, theme),
