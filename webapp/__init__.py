@@ -23,16 +23,13 @@ class IndexHandler (BaseHandler):
 		try:
 			decks = []
 			for d in coll.decks.all():
-				try:
-					setDeck(coll, d['name'])
-					card = coll.sched.getCard()
-					counts = coll.sched.counts()
-					decks.append({ 
-						'name': d['name'],
-						**counts
-					})
-				except:
-					pass
+				setDeck(coll, d['name'])
+				card = coll.sched.getCard()
+				counts = coll.sched.counts()
+				decks.append({ 
+					'name': d['name'],
+					'counts': counts
+				})
 				print(tornado.escape.utf8(str(decks)))
 			self.render("%s/templates/index.html" % self.appPath,
 				themePath=self.themePath,

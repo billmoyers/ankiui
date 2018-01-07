@@ -4,7 +4,7 @@
 {% block body %}
 <ul>
 {% for d in decks %}
-	<li><a href="{{ escape(baseUrl) }}/decks/{{ escape(d['name']) }}/study">{{ escape(d['name']) }}</a></li>
+	<li><a href="/anki/decks/{{ escape(d['name']) }}/study">{{ escape(d['name']) }}</a></li>
 {% end %}
 </ul>
 
