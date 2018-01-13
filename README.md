@@ -16,6 +16,8 @@ docker run -it --rm \
 	-w /app \
 	-p 8080:8080 \
 	--env ANKI_DECK_PATH=/app/data/$MY_ANKI_COLLECTION \
-	--env TORNADO_PORT=8080 $MYNAME/tornado \
+	--env TORNADO_PORT=8080 \
+	--env ANKI_WEBAPP_THEME=basic \
+	$MYNAME/tornado \
 	/usr/bin/python3 __init__.py
 ```

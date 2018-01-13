@@ -30,7 +30,6 @@ class IndexHandler (BaseHandler):
 					'name': d['name'],
 					'counts': counts
 				})
-				print(tornado.escape.utf8(str(decks)))
 			self.render("%s/templates/index.html" % self.appPath,
 				themePath=self.themePath,
 				decks=decks,
@@ -106,7 +105,7 @@ def app(cwd, theme, ankiFilePath):
 	)
 
 if __name__ == '__main__':
-	application = app(os.getcwd(), 'basic', os.environ["ANKI_DECK_PATH"])
+	application = app(os.getcwd(), os.environ["ANKI_WEBAPP_THEME"], os.environ["ANKI_DECK_PATH"])
 	application.listen(os.environ["TORNADO_PORT"])
 	tornado.ioloop.IOLoop.instance().start()
 
